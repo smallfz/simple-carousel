@@ -90,9 +90,9 @@ class SimpleCarousel extends React.Component{
             }
             var x = i * w + pos.x;
             var transform = `translate(${x}px, 0px)`;
-            var color = parseInt(256 * (_i + 0.35) / boxes.length);
+            // var color = parseInt(256 * (_i + 0.35) / boxes.length);
             b.style.width = w + 'px';
-            b.style.backgroundColor = `hsl(${color}, 90%, 75%)`;
+            // b.style.backgroundColor = `hsl(${color}, 90%, 75%)`;
             b.style.transform = transform;
             b.style['-webkit-transform'] = transform;
             var c = b.className.replace(/\s+ani/i, '');
