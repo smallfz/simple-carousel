@@ -144,10 +144,13 @@ class SimpleCarousel extends React.Component{
     }
 
     _touchStart(e){
+        var {infinite} = this.props;
         var t = e.touches[0];
         this._prevPoint = {x: t.clientX, y: t.clientY};
-        if(this._rearrangeBoxes()){
-            this._updateBoxesPosition(false);
+        if(infinite){
+            if(this._rearrangeBoxes()){
+                this._updateBoxesPosition(false);
+            }
         }
     }
 
@@ -167,9 +170,6 @@ class SimpleCarousel extends React.Component{
 
     _touchEnd(e){
         var {infinite} = this.props;
-        if(typeof infinite == 'undefined'){
-            infinite = true;
-        }
         this._prevPoint = null;
         var w = this._size.w;
         var stepOffset = this._position.x % w;
@@ -192,7 +192,6 @@ class SimpleCarousel extends React.Component{
 
     render(){
         var {dots} = this.props;
-        if(typeof dots == 'undefined'){ dots = true; }
         var items = this.props.children || [];
         if(items.length < 3 && items.length > 0){
             if(items.length < 2){
@@ -221,5 +220,10 @@ class SimpleCarousel extends React.Component{
     }
 
 }
+
+SimpleCarousel.defaultProps = {
+    infinite: true,
+    dots: true
+};
 
 module.exports = SimpleCarousel;
