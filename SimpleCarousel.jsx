@@ -37,10 +37,10 @@ class SimpleCarousel extends React.Component{
     cleanUp(){
         var div = this._getDiv();
         if(!div){ return; }
-        div.removeListener('touchstart', this._touchStart);
-        div.removeListener('touchmove', this._touchMove);
-        div.removeListener('touchend', this._touchEnd);
-        div.removeListener('touchcancel', this._touchEnd);
+        div.removeEventListener('touchstart', this._touchStart);
+        div.removeEventListener('touchmove', this._touchMove);
+        div.removeEventListener('touchend', this._touchEnd);
+        div.removeEventListener('touchcancel', this._touchEnd);
         this._div = null;
     }
 
