@@ -45,8 +45,8 @@
 
 .simple-carousel > .pages > .page-box.ani-full
 {
-    transition-duration: 1.5s;
-    -webkit-transition-duration: 1.5s;
+    transition-duration: 1.0s;
+    -webkit-transition-duration: 1.0s;
     transition-timing-function: ease-out-in;
     -webkit-transition-timing-function: ease-out-in;
 }
