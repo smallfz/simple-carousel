@@ -9,11 +9,15 @@ class SimpleCarousel extends React.Component{
         this._touchStart = this._touchStart.bind(this);
         this._touchMove = this._touchMove.bind(this);
         this._touchEnd = this._touchEnd.bind(this);
+        this._playOneStep = this._playOneStep.bind(this);
+        this._moveLeftOneStepNow = this._moveLeftOneStepNow.bind(this);
         this._prevPoint = null;
         this._div = null;
         this._size = null;
         this._position = {x: 0, y: 0};
         this._pageCount = 0;
+        this._t = null;
+        this._currentPlayInterval = -1;
     }
 
     componentDidMount(){
@@ -35,6 +39,7 @@ class SimpleCarousel extends React.Component{
     }
 
     cleanUp(){
+        this._stopAutoPlay();
         var div = this._getDiv();
         if(!div){ return; }
         div.removeEventListener('touchstart', this._touchStart);
@@ -58,6 +63,43 @@ class SimpleCarousel extends React.Component{
     update(){
         this._updateBoxesPosition();
         this._updateDots();
+        var {autoPlay, autoPlayInterval, infinite} = this.props;
+        autoPlay = autoPlay && infinite;
+        if(!autoPlay || this._currentPlayInterval != autoPlayInterval){
+            this._stopAutoPlay();
+            if(autoPlay){
+                this._startAutoPlay();
+            }
+        }
+    }
+
+    _stopAutoPlay(){
+        if(this._t){
+            clearInterval(this._t);
+            this._t = null;
+        }
+    }
+
+    _startAutoPlay(){
+        var {autoPlayInterval} = this.props;
+        if(autoPlayInterval > 0){
+            this._t = setInterval(this._playOneStep, autoPlayInterval);
+            this._currentPlayInterval = autoPlayInterval;
+        }
+    }
+
+    _playOneStep(){
+        if(this._rearrangeBoxes()){
+            this._updateBoxesPosition();
+        }
+        setTimeout(this._moveLeftOneStepNow, 1);
+    }
+
+    _moveLeftOneStepNow(){
+        var w = this._size.w;
+        this._position.x -= w;
+        this._updateBoxesPosition('full');
+        this._updateDots();
     }
 
     _updateDots(){
@@ -75,7 +117,7 @@ class SimpleCarousel extends React.Component{
         }
     }
 
-    _updateBoxesPosition(ani){
+    _updateBoxesPosition(aniName){
         var div = this._div;
         var w = this._size.w;
         var boxes = div.querySelectorAll('.page-box');
@@ -95,8 +137,8 @@ class SimpleCarousel extends React.Component{
             // b.style.backgroundColor = `hsl(${color}, 90%, 75%)`;
             b.style.transform = transform;
             b.style['-webkit-transform'] = transform;
-            var c = b.className.replace(/\s+ani/i, '');
-            b.className = ani ? c+' ani' : c;
+            var c = b.className.replace(/\s+ani\-\w+/i, '');
+            b.className = aniName ? c+' ani-'+aniName : c;
         }
     }
 
@@ -147,9 +189,10 @@ class SimpleCarousel extends React.Component{
         var {infinite} = this.props;
         var t = e.touches[0];
         this._prevPoint = {x: t.clientX, y: t.clientY};
+        this._stopAutoPlay();
         if(infinite){
             if(this._rearrangeBoxes()){
-                this._updateBoxesPosition(false);
+                this._updateBoxesPosition();
             }
         }
     }
@@ -164,12 +207,12 @@ class SimpleCarousel extends React.Component{
         this._prevPoint.x = t.clientX;
         this._prevPoint.y = t.clientY;
         if(offsetX != 0){
-            this._updateBoxesPosition(false);
+            this._updateBoxesPosition();
         }
     }
 
     _touchEnd(e){
-        var {infinite} = this.props;
+        var {infinite, autoPlay} = this.props;
         this._prevPoint = null;
         var w = this._size.w;
         var stepOffset = this._position.x % w;
@@ -186,8 +229,13 @@ class SimpleCarousel extends React.Component{
             }
         }
         this._position.x = x;
-        this._updateBoxesPosition(true);
+        this._updateBoxesPosition('half');
         this._updateDots();
+        if(autoPlay){
+            // reset autoplay state
+            this._stopAutoPlay();
+            this._startAutoPlay();
+        }
     }
 
     render(){
@@ -223,7 +271,9 @@ class SimpleCarousel extends React.Component{
 
 SimpleCarousel.defaultProps = {
     infinite: true,
-    dots: true
+    dots: true,
+    autoPlay: true,
+    autoPlayInterval: 5000
 };
 
 module.exports = SimpleCarousel;

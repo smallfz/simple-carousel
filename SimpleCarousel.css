@@ -35,12 +35,20 @@
     -webkit-transition-duration: 0s;
 }
 
-.simple-carousel > .pages > .page-box.ani
+.simple-carousel > .pages > .page-box.ani-half
 {
     transition-duration: 0.2s;
     -webkit-transition-duration: 0.2s;
     transition-timing-function: ease-in;
     -webkit-transition-timing-function: ease-in;
+}
+
+.simple-carousel > .pages > .page-box.ani-full
+{
+    transition-duration: 1.5s;
+    -webkit-transition-duration: 1.5s;
+    transition-timing-function: ease-out-in;
+    -webkit-transition-timing-function: ease-out-in;
 }
 
 .simple-carousel > .pages > .page-box .center
